@@ -1,64 +1,51 @@
-import { useState, useEffect } from 'react';
-import './App.css'
+import { useState } from "react";
+import Todo from "./components/Todo";
 
 function App() {
-  const [filter, setFilter] = useState('all');
-  const todoExample = {
-  id: Date.now(), // или используйте crypto.randomUUID()
-  text: "Изучить React",
-  completed: false,
-  createdAt: new Date().toISOString()
-};
+  const [todoName, setTodoName] = useState("")
+  const [todos, setTodos] = useState([])
 
-const addTodo = (text) => {
-  const newTodo = {
-    id: Date.now(),
-    text: text.trim(),
-    completed: false,
-    createdAt: new Date().toISOString()
-  };
-  setTodos(prev => [...prev, newTodo]);
-};
-
-const [todos, setTodos] = useState(() => {
-  const savedTodos = localStorage.getItem('todos');
-  return savedTodos ? JSON.parse(savedTodos) : [];
-});
-
-const toggleTodo = (id) => {
-  setTodos(prev => 
-    prev.map(todo => 
-      todo.id === id ? { ...todo, completed: !todo.completed } : todo
-    )
-  );
-};
-
-const deleteTodo = (id) => {
-  setTodos(prev => prev.filter(todo => todo.id !== id));
-};
-
-const updateTodo = (id, newText) => {
-  setTodos(prev =>
-    prev.map(todo =>
-      todo.id === id ? { ...todo, text: newText } : todo
-    )
-  );
-};
+  const handleAdd = () => {
+    setTodos((todosOld) => [todoName, ...todosOld])
+  }
 
   return (
-<div className="app">
-      <div className="container">
-        <header className="header">
-          <h1>Todo App</h1>
-        </header>
-        {/* остальные компоненты */}
+    <div className="container">
+      <div className="header">
+        <h1>Todo App</h1>
+        <p>Управляйте своими задачами</p>
+      </div>
+
+      <div className="add-todo">
+        <div className="input-container">
+          <input
+            onChange={(e) => setTodoName(e.target.value)}
+            value={todoName}
+            type="text"
+            className="todo-input"
+            placeholder="Добавить новую задачу..." />
+          <button onClick={handleAdd} className="add-btn" id="addBtn">Добавить</button>
+        </div>
+      </div>
+
+      <div className="filters">
+        <button className="filter-btn active" data-filter="all">Все</button>
+        <button className="filter-btn" data-filter="active">Активные</button>
+        <button className="filter-btn" data-filter="completed">Завершенные</button>
+      </div>
+
+      <div className="todo-list">
+        {todos.map((el) => (
+          <Todo />
+        ))}
+
+      </div>
+      <div className="todo-list">
       </div>
     </div>
-  );
-}
 
-useEffect(() => {
-  localStorage.setItem('todos', JSON.stringify(todos));
-}, [todos]);
+
+  )
+}
 
 export default App
